@@ -44,53 +44,10 @@ public sealed class MusicService
 	{
 		CreateNotificationChannel();
 		var ctx = Platform.AppContext;
-
-
-		var pendingIntentFlags = Build.VERSION.SdkInt >= BuildVersionCodes.S
-			? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
-			: PendingIntentFlags.UpdateCurrent;
-
-
 		mediaSession = new MediaSessionCompat(ctx, "notification");
-
 		mediaSession.SetCallback(new MediaCallback(this));
 
-
-
-		var style =
-				new AndroidX.Media.App.NotificationCompat.MediaStyle()
-				.SetMediaSession(mediaSession.SessionToken)
-				//.SetShowActionsInCompactView(0, 1, 2)
-				;
-
-		var intent = new Intent(Platform.CurrentActivity, typeof(MainActivity)).SetAction("OpenPlayer");
-
-		var notificationBuilder = new NotificationCompat.Builder(ctx, channelId)
-			.SetSmallIcon(IcMenuDay)
-			.SetContentTitle("Caxangá")
-			.SetContentText("Milton Nascimento")
-			//.SetOngoing(true)
-			.SetOnlyAlertOnce(true)
-			.SetPriority(NotificationCompat.PriorityHigh)
-			.SetStyle(style)
-			.SetContentIntent(PendingIntent.GetActivity(Platform.CurrentActivity, 24, intent, pendingIntentFlags))
-			.SetVisibility(NotificationCompat.VisibilityPublic)
-			.SetSound(null);
-
-		var notification = notificationBuilder.Build();
-
-		var notificationManager = NotificationManagerCompat.From(ctx);
-		var metaData = new MediaMetadataCompat.Builder();
-		metaData.PutString(MediaMetadataCompat.MetadataKeyTitle, "Caxangá")
-			.PutString(MediaMetadataCompat.MetadataKeyArtist, "Milton Nascimento")
-			.PutLong(MediaMetadataCompat.MetadataKeyDuration, 60 * 5);
-
-		// If you don't call this method, the notification will be handled by the broadcast service instead of 
-		// the MusicSession.Callback
-		ConfigurePlaybackState();
-
-		mediaSession.SetMetadata(metaData.Build());
-		notificationManager.Notify(321, notification);
+		Update(true);
 	}
 
 	static void ConfigurePlaybackState(bool isPlaying = true)
